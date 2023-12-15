@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author github.com/sefaunal
- * @since 2023-09-18
+ * @since 2023-12-18
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    private String token;
-    private boolean mfaEnabled;
+public class RecoveryCodesResponse {
+    private List<String> recoveryCodes;
 }
