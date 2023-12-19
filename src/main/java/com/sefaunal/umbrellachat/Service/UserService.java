@@ -66,7 +66,7 @@ public class UserService {
         user.setMfaEnabled(true);
         saveUser(user);
 
-        return new GenericResponse("MFA has been successfully enabled.");
+        return new GenericResponse(200, "MFA has been successfully enabled.");
     }
 
     public GenericResponse disableMFA() {
@@ -74,6 +74,7 @@ public class UserService {
         user.setMfaEnabled(false);
         user.setMfaSecret(null);
         saveUser(user);
-        return new GenericResponse("MFA has been successfully disabled.");
+
+        return new GenericResponse(200, "MFA has been successfully disabled.");
     }
 }
