@@ -18,7 +18,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,8 @@ public class AuthService {
 
     private final BackupKeysService backupKeysService;
 
+    private final OAuth2Service oAuth2Service;
+
     public AuthenticationResponse register(RegisterRequest request) {
         User user = new User();
         user.setEmail(request.getEmail());
@@ -58,7 +59,11 @@ public class AuthService {
         user.setMfaSecret(null);
         userService.saveUser(user);
         String JWT = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(JWT).build();
+        return AuthenticationResponse.builder().token(JWT).mfaEnabled(false).build();
+    }
+
+    public AuthenticationResponse authenticate(HttpServletRequest servletRequest, String provider, String token) {
+        return oAuth2Service.authenticateOAuth2(servletRequest, provider, token);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletRequest servletRequest, HttpSession httpSession) {
@@ -68,7 +73,7 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-        User user = userService.findUserByMail(request.getEmail()).orElseThrow();
+        User user = userService.findUserByMail(request.getEmail());
 
         if (user.isMfaEnabled()) {
             httpSession.setAttribute("authenticatedUser", request.getEmail());
@@ -91,8 +96,7 @@ public class AuthService {
             throw new IllegalStateException("User is not authenticated");
         }
 
-        User user = userService.findUserByMail(userMail)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found with " + userMail));
+        User user = userService.findUserByMail(userMail);
 
         if (!mfaService.isOtpValid(EncryptionUtils.decryptSecretKey(user.getMfaSecret()), request.getMfaCode())) {
             throw new BadCredentialsException("MFA Code is not valid!");
@@ -115,8 +119,7 @@ public class AuthService {
             throw new IllegalStateException("User is not authenticated");
         }
 
-        User user = userService.findUserByMail(userMail)
-                .orElseThrow(() -> new UsernameNotFoundException("No user found with " + userMail));
+        User user = userService.findUserByMail(userMail);
 
         BackupKeys backupKeys = backupKeysService.obtainEncryptedRecoveryCodes(userMail);
         List<String> decryptedBackupKeys = backupKeysService.decryptRecoveryKeys(userMail).getRecoveryCodes();
