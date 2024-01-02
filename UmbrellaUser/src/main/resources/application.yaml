@@ -1,0 +1,15 @@
+server:
+  port: 0
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: UmbrellaUser
+  banner:
+    location: banner.txt
