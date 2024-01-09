@@ -11,3 +11,8 @@ spring:
     name: APIGateway
   banner:
     location: banner.txt
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false

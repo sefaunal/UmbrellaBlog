@@ -8,6 +8,7 @@ import com.sefaunal.umbrellaauth.Request.VerificationRequest;
 import com.sefaunal.umbrellaauth.Response.AuthenticationResponse;
 import com.sefaunal.umbrellaauth.Model.User;
 import com.sefaunal.umbrellaauth.Response.GenericResponse;
+import com.sefaunal.umbrellaauth.Util.CommonUtils;
 import com.sefaunal.umbrellaauth.Util.EncryptionUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -146,6 +147,10 @@ public class AuthService {
                 .token(JWT)
                 .mfaEnabled(user.isMfaEnabled())
                 .build();
+    }
+
+    public Boolean validateToken(String JWT) {
+        return jwtService.isTokenValid(JWT.substring(7), CommonUtils.getUserInfo());
     }
 
     public GenericResponse logout(HttpServletRequest request, HttpServletResponse response) {

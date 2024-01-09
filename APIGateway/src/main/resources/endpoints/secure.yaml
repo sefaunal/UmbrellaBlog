@@ -1,0 +1,9 @@
+SECURE:
+  - URI: /api/auth/?
+    ROLES: [USER, OAUTH2_USER]
+
+  - URI: /api/auth/?
+    ROLES: [ADMIN]
+
+  - URI: /api/auth/logout
+    ROLES: [USER]
