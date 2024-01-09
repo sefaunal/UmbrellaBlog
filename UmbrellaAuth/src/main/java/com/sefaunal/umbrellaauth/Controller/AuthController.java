@@ -63,6 +63,11 @@ public class AuthController {
         return ResponseEntity.ok(authService.verifyRecoveryCode(recoveryCodeRequest, servletRequest, httpSession));
     }
 
+    @GetMapping("/verify/token")
+    public ResponseEntity<?> verifyToken(@RequestParam String token) {
+        return ResponseEntity.ok(authService.validateToken(token));
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@Nonnull HttpServletRequest request,
                                     @Nonnull HttpServletResponse response) {

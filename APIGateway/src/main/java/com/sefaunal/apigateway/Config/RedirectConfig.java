@@ -1,4 +1,4 @@
-package com.sefaunal.apigateway.Redirect;
+package com.sefaunal.apigateway.Config;
 
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024-01-08
  */
 @Configuration
-public class RedirectConfiguration {
+public class RedirectConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
