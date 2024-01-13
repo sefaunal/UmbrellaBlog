@@ -16,7 +16,7 @@ public class ApplicationConfig {
     private final AuthenticationFilter authenticationFilter;
 
     @Bean
-    public GlobalFilter authenticationFilter() {
+    public GlobalFilter globalAuthFilter() {
         return authenticationFilter;
     }
 }
