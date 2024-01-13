@@ -1,6 +1,8 @@
-package com.sefaunal.apigateway.Handler;
+package com.sefaunal.umbrellagateway.Handler;
 
-import com.sefaunal.apigateway.Response.GenericResponse;
+import com.sefaunal.umbrellagateway.Exception.InvalidAccessException;
+import com.sefaunal.umbrellagateway.Exception.InvalidTokenFormatException;
+import com.sefaunal.umbrellagateway.Response.GenericResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.support.NotFoundException;
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GenericResponse> handleNotFoundException(NotFoundException ex) {
         GenericResponse genericResponse = new GenericResponse(404, ex.getMessage());
 
-        LOG.error("Error -> Status: {}, Message: {}", genericResponse.getStatus(), genericResponse.getMessage());
+        printErrorLog(genericResponse);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(genericResponse);
     }
 
@@ -30,15 +32,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<GenericResponse> handleServiceUnavailableException(ServiceUnavailableException ex) {
         GenericResponse genericResponse = new GenericResponse(503, ex.getMessage());
 
-        LOG.error("Error -> Status: {}, Message: {}", genericResponse.getStatus(), genericResponse.getMessage());
+        printErrorLog(genericResponse);
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(genericResponse);
+    }
+    
+    @ExceptionHandler(InvalidAccessException.class)
+    public ResponseEntity<GenericResponse> handleInvalidAccessException(InvalidAccessException ex) {
+        GenericResponse genericResponse = new GenericResponse(403, ex.getMessage());
+
+        printErrorLog(genericResponse);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(genericResponse);
+    }
+
+    @ExceptionHandler(InvalidTokenFormatException.class)
+    public ResponseEntity<GenericResponse> handleInvalidTokenFormatException(InvalidTokenFormatException ex) {
+        GenericResponse genericResponse = new GenericResponse(400, ex.getMessage());
+
+        printErrorLog(genericResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(genericResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GenericResponse> handleGeneralException(Exception ex) {
         GenericResponse genericResponse = new GenericResponse(500, ex.getMessage());
 
-        LOG.error("Error -> Status: {}, Message: {}", genericResponse.getStatus(), genericResponse.getMessage());
+        printErrorLog(genericResponse);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(genericResponse);
+    }
+    
+    private static void printErrorLog(GenericResponse genericResponse) {
+        LOG.error("Error -> Status: {}, Message: {}", genericResponse.getStatus(), genericResponse.getMessage());
     }
 }

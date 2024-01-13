@@ -1,0 +1,41 @@
+server:
+  port: 8090
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+
+spring:
+  application:
+    name: APIGateway
+  banner:
+    location: banner.txt
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        - id: auth-service
+          uri: lb://UmbrellaAuth
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: blog-service
+          uri: lb://UmbrellaBlog
+          predicates:
+            - Path=/api/blog/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: user-service
+          uri: lb://UmbrellaUser
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - name: AuthenticationFilter

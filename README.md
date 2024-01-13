@@ -1,6 +1,6 @@
 # Umbrella Chat - Backend
 
-#### -> Blog & Chat App with Microservices
+#### -> Blog App with Microservices
 #### -> Under Development - Will be updated
 
 #### ⚡ Tech Stack:

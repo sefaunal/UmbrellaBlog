@@ -1,4 +1,4 @@
-package com.sefaunal.apigateway.Response;
+package com.sefaunal.umbrellagateway.Response;
 
 import lombok.Data;
 

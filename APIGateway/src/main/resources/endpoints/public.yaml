@@ -1,6 +1,0 @@
-PUBLIC:
-  - URI: /api/?
-    ROLES: [NONE]
-
-  - URI: /api/?
-    ROLES: [NONE]
