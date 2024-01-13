@@ -96,7 +96,7 @@ public class OAuth2Service {
         if (user.isPresent()) {
             String JWT = jwtService.generateToken(user.get());
 
-            CompletableFuture.runAsync(() -> loginHistoryService.saveLoginHistory(servletRequest, user.get().getEmail()));
+            loginHistoryService.saveLoginHistory(servletRequest, user.get().getEmail());
             return AuthenticationResponse.builder().token(JWT).mfaEnabled(false).build();
         }
 
