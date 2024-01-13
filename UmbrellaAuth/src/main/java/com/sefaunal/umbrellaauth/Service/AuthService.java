@@ -24,7 +24,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author github.com/sefaunal
@@ -84,7 +83,7 @@ public class AuthService {
         }
 
         String JWT = jwtService.generateToken(user);
-        CompletableFuture.runAsync(() -> loginHistoryService.saveLoginHistory(servletRequest, request.getEmail()));
+        loginHistoryService.saveLoginHistory(servletRequest, request.getEmail());
         return AuthenticationResponse.builder()
                 .token(JWT)
                 .mfaEnabled(false)
@@ -105,7 +104,7 @@ public class AuthService {
 
         httpSession.invalidate();
         String JWT = jwtService.generateToken(user);
-        CompletableFuture.runAsync(() -> loginHistoryService.saveLoginHistory(servletRequest, userMail));
+        loginHistoryService.saveLoginHistory(servletRequest, userMail);
         return AuthenticationResponse.builder()
                 .token(JWT)
                 .mfaEnabled(user.isMfaEnabled())
@@ -142,7 +141,7 @@ public class AuthService {
 
         httpSession.invalidate();
         String JWT = jwtService.generateToken(user);
-        CompletableFuture.runAsync(() -> loginHistoryService.saveLoginHistory(servletRequest, userMail));
+        loginHistoryService.saveLoginHistory(servletRequest, userMail);
         return AuthenticationResponse.builder()
                 .token(JWT)
                 .mfaEnabled(user.isMfaEnabled())
