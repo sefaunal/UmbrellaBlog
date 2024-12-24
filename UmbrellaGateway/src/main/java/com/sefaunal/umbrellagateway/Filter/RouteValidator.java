@@ -15,8 +15,7 @@ public class RouteValidator {
     //TODO move this to a yaml file
     public static final List<String> openAPIEndpoints = List.of(
             "/api/auth/register",
-            "/api/auth/verify",
-            "/api/auth/demo",
+            "/api/auth/authenticate",
             "/eureka"
     );
 

@@ -2,8 +2,10 @@ package com.sefaunal.umbrellagateway.Filter;
 
 import com.sefaunal.umbrellagateway.Exception.InvalidAccessException;
 import com.sefaunal.umbrellagateway.Exception.InvalidTokenFormatException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,11 +17,11 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
-    private final com.sefaunal.umbrellagateway.Filter.RouteValidator routeValidator;
+    private final RouteValidator routeValidator;
     private final WebClient.Builder webClientBuilder;
 
     public AuthenticationFilter(com.sefaunal.umbrellagateway.Filter.RouteValidator routeValidator, WebClient.Builder webClientBuilder) {
-        super(Config.class); // Ensure the Config class is passed correctly
+        super(Config.class);
         this.routeValidator = routeValidator;
         this.webClientBuilder = webClientBuilder;
     }
@@ -30,20 +32,19 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 String token = exchange.getRequest().getHeaders().getFirst("Authorization");
 
-                if (token == null || token.isEmpty()) {
+                if (StringUtils.isEmpty(token)) {
                     throw new InvalidAccessException("Missing auth headers");
                 } else if (!token.startsWith("Bearer ")) {
                     throw new InvalidTokenFormatException("Invalid token format");
                 }
 
-                //TODO fix org.springframework.web.reactive.function.client.WebClientRequestException: Invalid scheme [lb]
                 return webClientBuilder.baseUrl("lb://UmbrellaAuth")
                         .build()
                         .get()
                         .uri(uriBuilder -> uriBuilder
                                 .path("/api/auth/verify/token")  // Path to the validate endpoint
-                                .queryParam("token", token)  // Query param with token
                                 .build())
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .retrieve()
                         .toEntity(Boolean.class)
                         .flatMap(responseEntity -> {
