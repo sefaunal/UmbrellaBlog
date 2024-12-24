@@ -10,10 +10,14 @@ eureka:
 
 spring:
   application:
-    name: APIGateway
+    name: UmbrellaGateway
   banner:
     location: banner.txt
   cloud:
+    discovery:
+      enabled: true
+    loadbalancer:
+      enabled: true
     gateway:
       discovery:
         locator:

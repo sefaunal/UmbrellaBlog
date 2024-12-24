@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,8 +65,8 @@ public class AuthController {
     }
 
     @GetMapping("/verify/token")
-    public ResponseEntity<?> verifyToken(@RequestParam String token) {
-        return ResponseEntity.ok(authService.validateToken(token));
+    public ResponseEntity<?> verifyToken(@Nonnull HttpServletRequest servletRequest) {
+        return ResponseEntity.ok(authService.validateToken(servletRequest.getHeader(HttpHeaders.AUTHORIZATION)));
     }
 
     @PostMapping("/logout")
